@@ -1,5 +1,4 @@
-#!/bin/bash
--e
+#!/bin/sh
 
 ver_list=$(curl "https://jmeter.apache.org/download_jmeter.cgi")
 
