@@ -1,0 +1,31 @@
+#!/bin/sh
+####################################################################################################
+# AUTH: Matthew Baum
+# DESC: This script automates the execution of a jmeter test and the production of test results
+# ARGS:
+#	$1: jmeter_script: the script to run
+#   $2: output_directory: the directory where a date-stamped results directory will be created
+#   $others: All other arguments are forwarded directly to jmeter
+#
+# NOTE: This script assumes jmeter is included in the command path
+####################################################################################################
+-e
+
+if [ $# -lt 2 ]
+then
+	echo "**** ERROR: Must pass at least 2 args to this script: 1=jmeter_script, 2=output_directory"
+	echo "\tFound $# args: #@"
+	echo "\texiting..."
+	exit 1
+fi
+
+# create output directory
+VERSION=$(date +"%Y-%m-%d_%H-%M-%S")
+RES_DIR="$2/$VERSION"
+echo "**** LOG: Results will appear under: $RES_DIR"
+mkdir -p $RES_DIR
+
+# run test and save console log
+echo "**** LOG: Starting jmeter test: $1"
+echo "**** LOG: Additional arguments: ${@:3}"
+jmeter -n -t $1 -l $RES_DIR/res.csv -e -o $RES_DIR/dashboard -j $RES_DIR/jmeter.log -JRES_DIR=$RES_DIR ${@:3} | tee $RES_DIR/console.log

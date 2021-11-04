@@ -1,0 +1,30 @@
+#!/bin/bash
+-e
+
+ver_list=$(curl "https://jmeter.apache.org/download_jmeter.cgi")
+
+latest=$(echo ${ver_list} | perl -ne 'print "$1\n" if /href="([^"]+jmeter-\d+\.\d+\.\d+\.tgz)/')
+file=$(echo ${latest} | perl -ne 'print "$1\n" if /(apache-jmeter-\d+\.\d+\.\d+)/')
+
+echo $version
+
+regex="https://.*\.tgz$"
+
+if [[ $latest =~ $regex ]] && [ -z $version ]
+then
+	# get latest jmeter build and extract
+	curl "$latest" --output "${file}.tgz"
+	tar -xvzf "${file}.tgz"
+	
+	# clean up unecessary files
+	rm -rf "${file}/docs"
+	rm -rf "${file}/extras"
+	rm -rf "${file}/licenses"
+	rm -rf "${file}/printable_docs"
+	rm -rf "${file}/bin/examples"
+	rm -rf "${file}/bin/templates"
+	find apache-jmeter-5.4.1 -maxdepth 1 -type f -delete
+else
+	echo "ERROR: Failed to obtain URL of latest JMeter release"
+	exit 1
+fi
