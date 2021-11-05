@@ -43,6 +43,7 @@ then
 	# Build
 	echo "Building Docker image"
 	docker build -t "mattb0m/jmeter:${version}" .
+	docker tag "mattb0m/jmeter:${version}" "mattb0m/jmeter:latest"
 	rm -rf "${jmeter_home}"
 	echo "Successfully built image for JMeter ${version}"
 	
