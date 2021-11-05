@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+if [ $# -lt 2 ]
+then
+	echo "**** ERROR: Must pass at least 2 args to this script: 1=working directory to mount, 2=jmeter script name"
+	echo "\tFound $# args: #@"
+	echo "\texiting..."
+	exit 1
+fi
+
+workdir="$1"
+shift
+docker run --rm --name jmeter -i --mount "type=bind,src=$workdir,dst=/data" -w "/data" "mattb0m/jmeter:5.4.1" /data $@

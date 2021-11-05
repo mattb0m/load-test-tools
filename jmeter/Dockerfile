@@ -1,7 +1,6 @@
 FROM alpine:latest
 RUN apk add openjdk11-jre-headless
-WORKDIR /
-COPY jmeter .
+COPY jmeter /jmeter
 COPY run-test /jmeter/bin
-ENV PATH $PATH:/jmeter/bin
+ENV PATH="/jmeter/bin:${PATH}"
 ENTRYPOINT ["run-test"]
