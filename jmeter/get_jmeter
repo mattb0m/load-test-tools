@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 ver_list=$(curl "https://jmeter.apache.org/download_jmeter.cgi")
 
@@ -23,6 +24,7 @@ then
 	rm -rf "${file}/bin/examples"
 	rm -rf "${file}/bin/templates"
 	find apache-jmeter-5.4.1 -maxdepth 1 -type f -delete
+	rm -f "${file}.tgz"
 else
 	echo "ERROR: Failed to obtain URL of latest JMeter release"
 	exit 1
