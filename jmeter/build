@@ -1,0 +1,52 @@
+#!/bin/sh
+set -e
+
+# clean up dirty build
+rm -rf jmeter
+rm -f *.tgz
+
+DOWNLOAD_URL="https://jmeter.apache.org/download_jmeter.cgi"
+
+ver_list=$(curl --silent ${DOWNLOAD_URL})
+latest=$(echo ${ver_list} | perl -ne 'print "$1\n" if /href="([^"]+jmeter-\d+\.\d+\.\d+\.tgz)/')
+long_name=$(echo ${latest} | perl -ne 'print "$1\n" if /(apache-jmeter-\d+\.\d+\.\d+)/')
+version=$(echo ${long_name} | perl -ne 'print "$1\n" if /(\d+\.\d+\.\d+$)/')
+
+echo "Downloading JMeter ${version}"
+
+regex="https://.*\.tgz$"
+
+if [[ $latest =~ $regex ]]
+then
+	jmeter_home="jmeter"
+	archive="${long_name}.tgz"
+
+	# get latest jmeter build and extract
+	curl --silent "$latest" --output "${archive}"
+	echo "Extracting JMeter from TAR archive"
+	tar -xzf "${archive}"
+	mv $long_name $jmeter_home
+	
+	# clean up unecessary files
+	echo "Cleaning up unnecessary files"
+	rm -rf "${jmeter_home}/docs"
+	rm -rf "${jmeter_home}/extras"
+	rm -rf "${jmeter_home}/licenses"
+	rm -rf "${jmeter_home}/printable_docs"
+	rm -rf "${jmeter_home}/bin/examples"
+	rm -rf "${jmeter_home}/bin/templates"
+	find $jmeter_home -maxdepth 1 -type f -delete
+	rm -f "${archive}"
+	
+	echo "Successfully acquired JMeter ${version}"
+	
+	# Build
+	echo "Building Docker image"
+	docker build -t "mattb0m/jmeter:${version}" .
+	rm -rf "${jmeter_home}"
+	echo "Successfully built image for JMeter ${version}"
+	
+else
+	echo "ERROR: Failed to obtain URL of latest JMeter release"
+	exit 1
+fi
