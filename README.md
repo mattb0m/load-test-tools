@@ -4,6 +4,7 @@ The code exposed here is a work in progress.
 
 ## Currently supported tools
 * Apache JMeter
+* Gatling (with Gradle)
 * Dynatrace (HTTP header tagging)
 
 Containerization is performed with Docker.
