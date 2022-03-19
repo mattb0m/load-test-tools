@@ -9,11 +9,11 @@ object Global extends BasicTestConfig
 
 // The complete load test
 class test01 extends Simulation {
-	val httpConf = http.baseUrl("https://www.google.ca")
-	
 	// Inject Dynatrace headers
 	val injector = new HttpHeaderInjector()
-	injector.injectHeaders(httpConf, true)
+	val httpConf = injector.injectHeaders(
+		http.baseUrl("https://www.google.ca"), 
+		true)
 	
 	setUp (
 		TestCase01.scn.inject(rampUsers(ConfigLoader.loadInt("users", 3)).during(Global.rampUp))

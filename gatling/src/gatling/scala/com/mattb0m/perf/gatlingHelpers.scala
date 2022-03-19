@@ -40,11 +40,12 @@ class HttpHeaderInjector {
 		val AN = hostname /* agent name (source) */
 		val SN = session.scenario /* scenario/thread group */
 		request.getHeaders.set("x-dynaTrace", "ID="+ID+";VU="+VU+";NA="+NA+";SI="+SI+";AN="+AN+";SN="+SN+";TE="+TE)
+		println("****** TEST")
 	}
 	
 	/* add all headers to HTTP request signature */
-	def injectHeaders(http:HttpProtocolBuilder, enableDynatrace:Boolean): Unit = {
-		http.sign((request, session) => {
+	def injectHeaders(http:HttpProtocolBuilder, enableDynatrace:Boolean): HttpProtocolBuilder = {
+		return http.sign((request, session) => {
 			for ((name,cb) <- this.callbacks) request.getHeaders.set(name, cb.call())
 			if(enableDynatrace) addDynatraceHeader(request, session)
 		})
