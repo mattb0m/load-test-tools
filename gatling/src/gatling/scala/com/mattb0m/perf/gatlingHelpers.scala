@@ -40,7 +40,6 @@ class HttpHeaderInjector {
 		val AN = hostname /* agent name (source) */
 		val SN = session.scenario /* scenario/thread group */
 		request.getHeaders.set("x-dynaTrace", "ID="+ID+";VU="+VU+";NA="+NA+";SI="+SI+";AN="+AN+";SN="+SN+";TE="+TE)
-		println("****** TEST")
 	}
 	
 	/* add all headers to HTTP request signature */
@@ -87,9 +86,9 @@ class TestStep (actions:ChainBuilder) {
 }
 
 // A grouped load test case, calling individual Steps/Actions
-class TestCase (pacing:FiniteDuration, actions:ChainBuilder*) {
+class TestCase(init:ChainBuilder, pacing:FiniteDuration, actions:ChainBuilder*) {
 	val name = this.getClass.getSimpleName.stripSuffix("$")
-	val scn = scenario(name).forever {
+	val scn = scenario(name).exec(group(s"_TC_${name}") {init}).forever {
 		group(s"_TC_${name}") {
 			exitBlockOnFail {
 				pace(pacing)

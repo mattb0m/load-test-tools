@@ -5,6 +5,7 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
 object TestCase01 extends TestCase (
+	InitStep.requests,
 	Global.pacing,
 	TestStep01.requests,
 	TestStep02.requests)
