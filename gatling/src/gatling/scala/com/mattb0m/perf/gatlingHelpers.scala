@@ -53,6 +53,10 @@ class HttpHeaderInjector {
 
 // Load config values from System properties
 object ConfigLoader {
+	def load(name:String, default:String): String = {
+		return System.getProperty(name, default)
+	}
+	
 	def loadInt(name:String, default:Int): Int = {
 		return System.getProperty(name, default.toString).toInt
 	}
