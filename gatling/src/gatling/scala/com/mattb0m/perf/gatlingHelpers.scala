@@ -88,7 +88,7 @@ class TestStep (actions:ChainBuilder) {
 // A grouped load test case, calling individual Steps/Actions
 class TestCase(init:ChainBuilder, pacing:FiniteDuration, actions:ChainBuilder*) {
 	val name = this.getClass.getSimpleName.stripSuffix("$")
-	val scn = scenario(name).exec(group(s"_TC_${name}") {init}).forever {
+	val scn = scenario(name).exec(group(s"_TC_${name}") {init.exitHereIfFailed}).forever {
 		group(s"_TC_${name}") {
 			exitBlockOnFail {
 				pace(pacing)
