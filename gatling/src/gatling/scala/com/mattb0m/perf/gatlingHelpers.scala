@@ -13,6 +13,7 @@ import io.gatling.http.protocol.HttpProtocolBuilder
 import io.gatling.core.pause.{Constant, Disabled}
 import io.gatling.core.structure.ChainBuilder
 import scala.util.control.Breaks._
+import java.time.Instant
 
 object UuidFeeder {
 	val feed = Iterator.continually(scala.collection.immutable.Map("uuid" -> UUID.randomUUID().toString))
@@ -90,7 +91,7 @@ class BasicTestConfig {
 	for(i <- 1 to 99) {
 		val num = ConfigLoader.loadInt("users%02d".format(i), 0)
 		if(num == 0) {
-			break
+			break()
 		} else {
 			this.usersMap.addOne(i,num)
 		}
@@ -121,5 +122,14 @@ class TestCase(init:ChainBuilder, pacing:FiniteDuration, actions:ChainBuilder*) 
 				.exec(actions)
 			}
 		}
+	}
+}
+
+// Time helpers
+object TimeHelper {
+	
+	// Get seconds since EPOCH
+	def now(): Long = {
+		return Instant.now().getEpochSecond()
 	}
 }
