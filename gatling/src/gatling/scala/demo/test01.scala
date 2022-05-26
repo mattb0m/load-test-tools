@@ -16,7 +16,8 @@ class test01 extends Simulation {
 		true)
 	
 	setUp (
-		TestCase01.scn.inject(rampUsers(ConfigLoader.loadInt("users", 3)).during(Global.rampUp))
+		TestCase01.scn.inject(rampUsers(Global.users(1)).during(Global.rampUp)),
+		TestCase02.scn.inject(rampUsers(Global.users(2)).during(Global.rampUp))
 	)
 	.assertions (
 		global.failedRequests.percent.lt(1)

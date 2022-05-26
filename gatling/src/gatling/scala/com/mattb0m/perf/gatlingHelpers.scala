@@ -12,6 +12,7 @@ import io.gatling.http.client.Request
 import io.gatling.http.protocol.HttpProtocolBuilder
 import io.gatling.core.pause.{Constant, Disabled}
 import io.gatling.core.structure.ChainBuilder
+import scala.util.control.Breaks._
 
 object UuidFeeder {
 	val feed = Iterator.continually(scala.collection.immutable.Map("uuid" -> UUID.randomUUID().toString))
@@ -81,6 +82,27 @@ class BasicTestConfig {
 	// Wait time (in seconds)
 	val pacing = ConfigLoader.loadInt("pacing", 1).seconds
 	val pauses = if(ConfigLoader.loadBool("pauses", true)) Constant else Disabled // Execute pauses ?
+	
+	// User counts, matching pattern "users\d{2}"
+	val usersMap = Map[Int, Int]()
+	
+	breakable {
+	for(i <- 1 to 99) {
+		val num = ConfigLoader.loadInt("users%02d".format(i), 0)
+		if(num == 0) {
+			break
+		} else {
+			this.usersMap.addOne(i,num)
+		}
+	}}
+	
+	def users(index:Int): Int = {
+		if(this.usersMap.contains(index)) {
+			return this.usersMap(index)
+		} else {
+			return 0
+		}
+	}
 }
 
 // Single load test step

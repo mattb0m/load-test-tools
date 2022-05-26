@@ -5,7 +5,7 @@ It also provides code to inject Dynatarce headers and other dynamic values on al
 
 Sample command line to run the demo test (with 5 users):
 
-`gradle gatlingRun-demo.test01 -Dusers=5`
+`gradle gatlingRun-demo.test01 -Dusers01=2 -Dusers02=3`
 
 Test components are as follows:
 * demo/01_TestSteps/* : Individual test steps (actions for test cases)

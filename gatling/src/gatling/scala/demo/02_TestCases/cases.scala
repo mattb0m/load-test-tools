@@ -9,3 +9,8 @@ object TestCase01 extends TestCase (
 	Global.pacing,
 	TestStep01.requests,
 	TestStep02.requests)
+
+object TestCase02 extends TestCase (
+	exec(),
+	Global.pacing,
+	TestStep01.requests)
