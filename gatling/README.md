@@ -21,3 +21,10 @@ The sample load test demonstrates how to read each of these values from the envi
 * pauses (Boolean): Whether or not to respect pauses in test steps ("true" or "false")
 * pacing01 - pacing99 (Int): Pacing (minimum iteration time) for each test case/scenario, in seconds
 * users01 - users99 (Int): Number of users to attribute to each test case/scenario
+
+Library helper functions:
+* TimeHelper.now(): Returns the current Epoch time, in seconds
+* TokenHelper.isExpiredSec(session, start, ttl): Test token expiration generated at "start" and with lifetime "ttl" (both are strings identifying session variables)
+* SessionHelper.flushAll(): Flush all cookies and HTTP cache
+* SessionHelper.flushCookies(): Flush all cookies
+* SessionHelper.flushCache(): Flush HTTP cache
