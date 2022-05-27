@@ -81,8 +81,18 @@ class BasicTestConfig {
 	val maxDuration = rampUp + holdLoad + rampDown
 	
 	// Wait time (in seconds)
-	val pacing = ConfigLoader.loadInt("pacing", 1).seconds
 	val pauses = if(ConfigLoader.loadBool("pauses", true)) Constant else Disabled // Execute pauses ?
+	val pacingMap = Map[Int, FiniteDuration]()
+	
+	breakable {
+	for(i <- 1 to 99) {
+		val num = ConfigLoader.loadInt("pacing%02d".format(i), -1)
+		if(num == -1) {
+			break()
+		} else {
+			this.pacingMap.addOne(i, num.seconds)
+		}
+	}}
 	
 	// User counts, matching pattern "users\d{2}"
 	val usersMap = Map[Int, Int]()
@@ -90,16 +100,26 @@ class BasicTestConfig {
 	breakable {
 	for(i <- 1 to 99) {
 		val num = ConfigLoader.loadInt("users%02d".format(i), 0)
-		if(num == 0) {
+		if(num <= 0) {
 			break()
 		} else {
 			this.usersMap.addOne(i,num)
 		}
 	}}
 	
+	// Get user count by test case index
 	def users(index:Int): Int = {
 		if(this.usersMap.contains(index)) {
 			return this.usersMap(index)
+		} else {
+			return 1
+		}
+	}
+	
+	// Get pacing by test case index
+	def pacing(index:Int): FiniteDuration = {
+		if(this.pacingMap.contains(index)) {
+			return this.pacingMap(index)
 		} else {
 			return 0
 		}
@@ -131,5 +151,32 @@ object TimeHelper {
 	// Get seconds since EPOCH
 	def now(): Long = {
 		return Instant.now().getEpochSecond()
+	}
+}
+
+// Auth token helpers
+object TokenHelper {
+	// Test token expiration, based on generation time and TTL (expressed in seconds)
+	def isExpiredSec(session:Session, start:String, ttl:String): Boolean = {
+		return (!session.contains(start)
+			|| !session.contains(ttl)
+			|| (session(start).as[Long] + session(ttl).as[Long] <= TimeHelper.now())
+		);
+	}
+}
+
+// VUser session management
+object SessionHelper {
+	// Flush all cookies and cache
+	def flushAll():ChainBuilder = {
+		return exec(flushCookieJar).exec(flushHttpCache)
+	}
+	
+	def flushCookies():ChainBuilder = {
+		return exec(flushCookieJar)
+	}
+	
+	def flushCache():ChainBuilder = {
+		return exec(flushHttpCache)
 	}
 }

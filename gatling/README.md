@@ -18,6 +18,6 @@ The sample load test demonstrates how to read each of these values from the envi
 * rampUp (Int): Time over which to ramp up load, in seconds
 * holdLoad (Int): Time over which to hold the full load, in seconds
 * rampDown (Int): Time over which to ramp down the load, in seconds
-* pacing (Int): Pacing (minimum iteration time) for test cases, in seconds
 * pauses (Boolean): Whether or not to respect pauses in test steps ("true" or "false")
+* pacing01 - pacing99 (Int): Pacing (minimum iteration time) for each test case/scenario, in seconds
 * users01 - users99 (Int): Number of users to attribute to each test case/scenario

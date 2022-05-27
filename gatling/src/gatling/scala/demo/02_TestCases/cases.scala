@@ -6,11 +6,12 @@ import io.gatling.http.Predef._
 
 object TestCase01 extends TestCase (
 	InitStep.requests,
-	Global.pacing,
+	Global.pacing(1),
+	SessionHelper.flushAll(),
 	TestStep01.requests,
 	TestStep02.requests)
 
 object TestCase02 extends TestCase (
 	exec(),
-	Global.pacing,
+	Global.pacing(2),
 	TestStep01.requests)
