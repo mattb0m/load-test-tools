@@ -19,8 +19,10 @@ The sample load test demonstrates how to read each of these values from the envi
 * holdLoad (Int): Time over which to hold the full load, in seconds
 * rampDown (Int): Time over which to ramp down the load, in seconds
 * pauses (Boolean): Whether or not to respect pauses in test steps ("true" or "false")
-* pacing01 - pacing99 (Int): Pacing (minimum iteration time) for each test case/scenario, in seconds
-* users01 - users99 (Int): Number of users to attribute to each test case/scenario
+* pacing01 - pacing99 (Int): Pacing (minimum iteration time) for each test case/scenario, in seconds (default: pacingAll)
+* pacingAll (Int): Default pacing for all scenarios (default: 0)
+* users01 - users99 (Int): Number of users to attribute to each test case/scenario (default: usersAll)
+* usersAll (Int): Default users count for all scenarios (default: 1)
 
 Library helper functions:
 * TimeHelper.now(): Returns the current Epoch time, in seconds

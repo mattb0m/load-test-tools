@@ -74,54 +74,64 @@ object ConfigLoader {
 
 // Basic config for most load tests
 class BasicTestConfig {
+	// constants
+	val PacingDefault = 0
+	val PacingUndefined = -1
+	val UsersDefault = 1
+	val UsersUndefined = -1
+	
 	// Load profile (in seconds)
 	val rampUp = ConfigLoader.loadInt("rampUp", 1).seconds
 	val holdLoad = ConfigLoader.loadInt("holdLoad", 600).seconds
 	val rampDown = ConfigLoader.loadInt("rampDown", 1).seconds
 	val maxDuration = rampUp + holdLoad + rampDown
 	
-	// Wait time (in seconds)
+	// Respect think time or not
 	val pauses = if(ConfigLoader.loadBool("pauses", true)) Constant else Disabled // Execute pauses ?
+	
+	// pacing, in seconds, matching pattern "users\d{2}", fall back to PacingDefault
+	val pacingAll = ConfigLoader.loadInt("pacingAll", this.PacingDefault).seconds
 	val pacingMap = Map[Int, FiniteDuration]()
 	
 	breakable {
 	for(i <- 1 to 99) {
-		val num = ConfigLoader.loadInt("pacing%02d".format(i), -1)
-		if(num == -1) {
+		val num = ConfigLoader.loadInt("pacing%02d".format(i), this.PacingUndefined)
+		if(num == this.PacingUndefined || num < 0) {
 			break()
 		} else {
 			this.pacingMap.addOne(i, num.seconds)
 		}
 	}}
 	
-	// User counts, matching pattern "users\d{2}"
+	// User counts, matching pattern "users\d{2}", fall back to UsersDefault
+	val usersAll = ConfigLoader.loadInt("usersAll", this.UsersDefault)
 	val usersMap = Map[Int, Int]()
 	
 	breakable {
 	for(i <- 1 to 99) {
-		val num = ConfigLoader.loadInt("users%02d".format(i), 0)
-		if(num <= 0) {
+		val num = ConfigLoader.loadInt("users%02d".format(i), this.UsersUndefined)
+		if(num == this.UsersUndefined || num < 0) {
 			break()
 		} else {
 			this.usersMap.addOne(i,num)
 		}
 	}}
 	
-	// Get user count by test case index
+	// Get user count by test case index, fall back to usersAll, which falls back to UsersDefault
 	def users(index:Int): Int = {
 		if(this.usersMap.contains(index)) {
 			return this.usersMap(index)
 		} else {
-			return 1
+			return this.usersAll
 		}
 	}
 	
-	// Get pacing by test case index
+	// Get pacing by test case index, fall back to pacingAll, which falls back to PacingDefault
 	def pacing(index:Int): FiniteDuration = {
 		if(this.pacingMap.contains(index)) {
 			return this.pacingMap(index)
 		} else {
-			return 0
+			return this.pacingAll
 		}
 	}
 }
