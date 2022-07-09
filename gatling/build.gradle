@@ -3,6 +3,10 @@ plugins {
     id 'io.gatling.gradle' version '3.7.6.1'
 }
 
+repositories {
+	mavenCentral()
+}
+
 gatling {
   // WARNING: options below only work when logback config file isn't provided
   logLevel = 'WARN' // logback root level
