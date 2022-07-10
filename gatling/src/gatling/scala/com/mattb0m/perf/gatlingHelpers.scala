@@ -144,8 +144,10 @@ class TestStep (actions:ChainBuilder) {
 
 // A grouped load test case, calling individual Steps/Actions
 class TestCase(init:ChainBuilder, pacing:FiniteDuration, actions:ChainBuilder*) {
-	// Allow construction without the Init block
+	// Allow construction without the Init block or pacing
 	def this(pacing:FiniteDuration, actions:ChainBuilder*) = this(exec(), pacing, actions:_*)
+	def this(init:ChainBuilder, actions:ChainBuilder*) = this(init, 0, actions:_*)
+	def this(actions:ChainBuilder*) = this(exec(), 0, actions:_*)
 	
 	// Test case structure
 	val name = this.getClass.getSimpleName.stripSuffix("$")
