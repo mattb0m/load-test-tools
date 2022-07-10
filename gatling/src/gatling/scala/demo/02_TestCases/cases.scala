@@ -12,6 +12,5 @@ object TestCase01 extends TestCase (
 	TestStep02.requests)
 
 object TestCase02 extends TestCase (
-	exec(),
 	Global.pacing(2),
 	TestStep01.requests)

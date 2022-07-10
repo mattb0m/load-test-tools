@@ -144,6 +144,10 @@ class TestStep (actions:ChainBuilder) {
 
 // A grouped load test case, calling individual Steps/Actions
 class TestCase(init:ChainBuilder, pacing:FiniteDuration, actions:ChainBuilder*) {
+	// Allow construction without the Init block
+	def this(pacing:FiniteDuration, actions:ChainBuilder*) = this(exec(), pacing, actions:_*)
+	
+	// Test case structure
 	val name = this.getClass.getSimpleName.stripSuffix("$")
 	val scn = scenario(name).exec(group(s"_TC_${name}") {init.exitHereIfFailed}).forever {
 		group(s"_TC_${name}") {
