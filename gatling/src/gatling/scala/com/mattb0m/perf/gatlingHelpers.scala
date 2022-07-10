@@ -168,6 +168,11 @@ object TimeHelper {
 	def now(): Long = {
 		return Instant.now().getEpochSecond()
 	}
+	
+	// ms since EPOCH
+	def nowMilli(): Long = {
+		return Instant.now().toEpochMilli()
+	}
 }
 
 // Auth token helpers
@@ -177,6 +182,14 @@ object TokenHelper {
 		return (!session.contains(start)
 			|| !session.contains(ttl)
 			|| (session(start).as[Long] + session(ttl).as[Long] <= TimeHelper.now())
+		);
+	}
+	
+	// in ms
+	def isExpiredMilli(session:Session, start:String, ttl:String): Boolean = {
+		return (!session.contains(start)
+			|| !session.contains(ttl)
+			|| (session(start).as[Long] + session(ttl).as[Long] <= TimeHelper.nowMilli())
 		);
 	}
 }
