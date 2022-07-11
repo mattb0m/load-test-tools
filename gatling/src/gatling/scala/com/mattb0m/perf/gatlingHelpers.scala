@@ -143,19 +143,18 @@ class TestStep (actions:ChainBuilder) {
 }
 
 // A grouped load test case, calling individual Steps/Actions
-class TestCase(init:ChainBuilder, pacing:FiniteDuration, actions:ChainBuilder*) {
+class TestCase(init:TestStep, pacing:FiniteDuration, actions:TestStep*) {
 	// Allow construction without the Init block or pacing
-	def this(pacing:FiniteDuration, actions:ChainBuilder*) = this(exec(), pacing, actions:_*)
-	def this(init:ChainBuilder, actions:ChainBuilder*) = this(init, 0, actions:_*)
-	def this(actions:ChainBuilder*) = this(exec(), 0, actions:_*)
+	def this(pacing:FiniteDuration, actions:TestStep*) = this(new TestStep(exec()), pacing, actions:_*)
+	def this(actions:TestStep*) = this(new TestStep(exec()), 0, actions:_*)
 	
 	// Test case structure
 	val name = this.getClass.getSimpleName.stripSuffix("$")
-	val scn = scenario(name).exec(group(s"_TC_${name}") {init.exitHereIfFailed}).forever {
+	val scn = scenario(name).exec(group(s"_TC_${name}") {init.requests.exitHereIfFailed}).forever {
 		group(s"_TC_${name}") {
 			exitBlockOnFail {
 				pace(pacing)
-				.exec(actions)
+				.exec(actions.map(_.requests))
 			}
 		}
 	}
@@ -197,15 +196,15 @@ object TokenHelper {
 // VUser session management
 object SessionHelper {
 	// Flush all cookies and cache
-	def flushAll():ChainBuilder = {
-		return exec(flushCookieJar).exec(flushHttpCache)
+	def flushAll(): TestStep = {
+		return new TestStep(exec(flushCookieJar).exec(flushHttpCache))
 	}
 	
-	def flushCookies():ChainBuilder = {
-		return exec(flushCookieJar)
+	def flushCookies(): TestStep = {
+		return new TestStep(exec(flushCookieJar))
 	}
 	
-	def flushCache():ChainBuilder = {
-		return exec(flushHttpCache)
+	def flushCache(): TestStep = {
+		return new TestStep(exec(flushHttpCache))
 	}
 }
