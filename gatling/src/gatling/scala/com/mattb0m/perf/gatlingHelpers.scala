@@ -93,8 +93,7 @@ class BasicTestConfig {
 	val pacingAll = ConfigLoader.loadInt("pacingAll", this.PacingDefault).seconds
 	val pacingMap = Map[Int, FiniteDuration]()
 	
-	breakable {
-	for(i <- 1 to 99) {
+	for(i <- 1 to 99) { breakable {
 		val num = ConfigLoader.loadInt("pacing%02d".format(i), this.PacingUndefined)
 		if(num == this.PacingUndefined || num < 0) {
 			break()
@@ -107,8 +106,7 @@ class BasicTestConfig {
 	val usersAll = ConfigLoader.loadInt("usersAll", this.UsersDefault)
 	val usersMap = Map[Int, Int]()
 	
-	breakable {
-	for(i <- 1 to 99) {
+	for(i <- 1 to 99) { breakable {
 		val num = ConfigLoader.loadInt("users%02d".format(i), this.UsersUndefined)
 		if(num == this.UsersUndefined || num < 0) {
 			break()
