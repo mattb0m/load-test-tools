@@ -99,7 +99,7 @@ class BasicTestConfig {
 	
 	// pacing, in seconds, matching pattern "users\d{2}", fall back to PacingDefault
 	val pacingAll = ConfigLoader.loadInt("pacingAll", this.PacingDefault).seconds
-	val pacingMap = Map[Int, FiniteDuration]()
+	private val pacingMap = Map[Int, FiniteDuration]()
 	
 	for(i <- 1 to 99) { breakable {
 		val num = ConfigLoader.loadInt("pacing%02d".format(i), this.PacingUndefined)
@@ -112,7 +112,7 @@ class BasicTestConfig {
 	
 	// User counts, matching pattern "users\d{2}", fall back to UsersDefault
 	val usersAll = ConfigLoader.loadInt("usersAll", this.UsersDefault)
-	val usersMap = Map[Int, Int]()
+	private val usersMap = Map[Int, Int]()
 	
 	for(i <- 1 to 99) { breakable {
 		val num = ConfigLoader.loadInt("users%02d".format(i), this.UsersUndefined)
