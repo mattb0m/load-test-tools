@@ -27,11 +27,12 @@ trait InjectorCallback {
 class HttpHeaderInjector {
 	private val callbacks = Map[String, InjectorCallback]()
 	private var injectDT = false
+	private var testRunId = ""
 	
 	// Automatic header injection for Dynatrace integration
 	private def addDynatraceHeader(request:Request, session:Session): Unit = {
 		val hostname = InetAddress.getLocalHost().getHostName()
-		val TE = getClass.getSimpleName + "_" +LocalDateTime.now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) /* Test run ID */
+		val TE = this.testRunId /* Test run ID */
 		val ID = UUID.randomUUID.toString /* Unique request ID */
 		val VU = hostname + "_" + session.scenario + "_" + session.userId /* unique virtual user ID */
 		val NA = request.getName /* timer/sampler/request name */
@@ -55,8 +56,9 @@ class HttpHeaderInjector {
 	}
 	
 	// Enable Dynatrace header injection
-	def enableDynatrace(): HttpHeaderInjector = {
+	def enableDynatrace(simulation:Simulation): HttpHeaderInjector = {
 		this.injectDT = true
+		this.testRunId = simulation.getClass.getCanonicalName + "_" + LocalDateTime.now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 		this
 	}
 }
