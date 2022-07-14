@@ -27,12 +27,12 @@ trait InjectorCallback {
 class HttpHeaderInjector {
 	private val callbacks = Map[String, InjectorCallback]()
 	private var injectDT = false
-	private var testRunId = ""
+	private var runId = ""
 	
 	// Automatic header injection for Dynatrace integration
 	private def addDynatraceHeader(request:Request, session:Session): Unit = {
 		val hostname = InetAddress.getLocalHost().getHostName()
-		val TE = this.testRunId /* Test run ID */
+		val TE = this.runId /* Test run ID */
 		val ID = UUID.randomUUID.toString /* Unique request ID */
 		val VU = hostname + "_" + session.scenario + "_" + session.userId /* unique virtual user ID */
 		val NA = request.getName /* timer/sampler/request name */
@@ -58,7 +58,11 @@ class HttpHeaderInjector {
 	// Enable Dynatrace header injection
 	def enableDynatrace(simulation:Simulation): HttpHeaderInjector = {
 		this.injectDT = true
-		this.testRunId = simulation.getClass.getCanonicalName + "_" + LocalDateTime.now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+		// Support loading runId system prop from Gatling Enterprise (see v1.16.5 release notes), otherwise define a unique runId
+		this.runId = ConfigLoader.load (
+			"gatling.enterprise.runId", 
+			simulation.getClass.getCanonicalName + "_" + LocalDateTime.now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+		)
 		this
 	}
 }
